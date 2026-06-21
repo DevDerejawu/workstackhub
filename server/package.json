@@ -1,0 +1,46 @@
+{
+  "name": "workstackhub-backend",
+  "version": "1.0.0",
+  "description": "WorkStackHub backend API built with TypeScript, Express, PostgreSQL, and Drizzle ORM",
+  "main": "dist/index.js",
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "clean": "rm -rf dist",
+    "db:generate": "drizzle-kit generate --config=./src/db/drizzle.config.ts",
+    "db:migrate": "tsx src/db/migrate.ts",
+    "db:migrate:prod": "NODE_ENV=production node dist/db/migrate.js",
+    "db:seed": "tsx src/db/seed.ts",
+    "db:seed:prod": "NODE_ENV=production node dist/db/seed.js",
+    "db:push": "drizzle-kit push --config=./src/db/drizzle.config.ts",
+    "db:studio": "drizzle-kit studio --config=./src/db/drizzle.config.ts",
+    "db:drop": "drizzle-kit drop --config=./src/db/drizzle.config.ts",
+    "db:check": "drizzle-kit check --config=./src/db/drizzle.config.ts"
+  },
+  "keywords": [
+    "workstackhub",
+    "backend",
+    "api",
+    "typescript",
+    "express",
+    "postgresql",
+    "drizzle-orm"
+  ],
+  "author": "Derejawu Baye <devderejawu@gmail.com> (https://derejawu-portfolio.vercel.app)",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^17.4.2",
+    "drizzle-orm": "^0.45.2",
+    "express": "^5.2.1",
+    "pg": "^8.22.0"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.6",
+    "@types/node": "^26.0.0",
+    "drizzle-kit": "^0.31.10",
+    "tsx": "^4.22.4",
+    "typescript": "^6.0.3"
+  }
+}
