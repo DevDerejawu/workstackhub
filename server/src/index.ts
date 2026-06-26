@@ -1,29 +1,15 @@
-import 'dotenv/config';
-import express from 'express';
-import crypto from 'crypto'
-const app = express();
-const SERVER_PORT = process.env.SERVER_PORT;
+import "dotenv/config";
+import http from "http";
+import https from 'https';
+import app from "@/app.js";
+import { errorLogger } from "./utils/error.logger.js";
+import { shutdown } from "./utils/shutdown.server.js";
+const SERVER_PORT = Number(process.env.SERVER_PORT);
+const isDev = process.env.NODE_ENV === 'development';
+const server = isDev? http.createServer(app) : https.createServer(app);
 
-app.use(express.json());
-
-
-app.get('/', (_, res: Res) => {
-  res.send('Hello, World there!nnghghhhhhhhhhhhhh');
-});
-
-const jwtSecret = crypto.randomBytes(32).toString('hex');
-console.log('JWT_SECRET:', jwtSecret);
-
-// For Refresh Token - 64 characters hex
-const refreshSecret = crypto.randomBytes(32).toString('hex');
-console.log('JWT_REFRESH_SECR:', refreshSecret);
-
-// For production - 128 characters base64
-const prodSecret = crypto.randomBytes(64).toString('base64');
-console.log('Refresh_secret:', prodSecret);
-console.log('access_secret', prodSecret)
-console.log("TEST CHANGggggggggEmmm")
-
-app.listen(SERVER_PORT, () => {
-  console.log(`🚀 Server is running on http://localhost:${SERVER_PORT}`);
+process.on("SIGTERM", () => shutdown("SIGTERM", server));
+process.on("SIGINT", () => shutdown("SIGINT", server));
+server.listen(SERVER_PORT, () => {
+  errorLogger.info(`🚀 Server is running on http://localhost:${SERVER_PORT}`);
 });
