@@ -17,6 +17,21 @@ services:
       timeout: 5s
       retries: 5
 
+  redis:
+    container_name: redis
+    image: redis:7.2-alpine
+    restart: always
+    ports:
+      - "${REDIS_PORT:-6379}:${REDIS_CONTAINER_PORT:-6379}"
+    volumes:
+      - redis_data:/data
+    command: redis-server --appendonly yes --requirepass ${REDIS_PASSWORD}
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
   server:
     container_name: server
     image: workstackhub/server-development
@@ -30,11 +45,13 @@ services:
       - ./server/.env
     environment:
       - CHOKIDAR_USEPOLLING=true
-      # This OVERRIDES any DATABASE_URL from server/.env
       - DATABASE_URL=postgresql://${DB_USER}:${DB_PASSWORD}@database:${DB_CONTAINER_PORT}/${DB_NAME}?schema=public
       - SERVER_PORT=${SERVER_PORT}
+      - REDIS_URL=redis://:${REDIS_PASSWORD}@redis:${REDIS_CONTAINER_PORT}
     depends_on:
       database:
+        condition: service_healthy
+      redis:
         condition: service_healthy
     volumes:
       - ./server:/workstackhub/server
@@ -54,4 +71,6 @@ services:
 
 volumes:
   postgres_data:
+    driver: local
+  redis_data:
     driver: local
