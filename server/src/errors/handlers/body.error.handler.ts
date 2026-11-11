@@ -17,7 +17,7 @@ export function handleBodyError(err: any): AppError | null {
     );
   }
 
-  // 2. JSON too large (payload too large)
+  // 2. JSON too large 
   if (err.type === 'entity.too.large' || err.constructor?.name === 'PayloadTooLargeError') {
     return new AppError(
       `Request payload too large. Maximum size is ${err.limit || 'unknown'} bytes`,
@@ -31,7 +31,7 @@ export function handleBodyError(err: any): AppError | null {
     );
   }
 
-  // 3. Too many parameters/form fields
+  // 3. Too many fields
   if (err.type === 'parameters.too.many') {
     return new AppError(
       `Too many form fields. Maximum allowed is ${err.parameterLimit}`,
@@ -59,7 +59,7 @@ export function handleBodyError(err: any): AppError | null {
     );
   }
 
-  // 5. Malformed JSON (generic)
+  // 5. Malformed JSON 
   if (err.message && err.message.includes('Unexpected token')) {
     return new AppError(
       'Malformed JSON. Please check your syntax',

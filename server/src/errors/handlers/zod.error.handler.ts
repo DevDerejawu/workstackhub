@@ -2,26 +2,27 @@ import { ZodError } from 'zod';
 import { AppError } from '../app.error.js';
 import { ERROR_CODES, HTTP_STATUS } from '../constants/error.constants.js';
 export function handleZodError(error: any): AppError | null {
-  if (error instanceof ZodError) {
-    // Format validation errors for better readability
-    const errors = error.issues.map(issue => {
-      const path = issue.path.join('.');
-      return {
-        field: path || 'root',
-        message: issue.message,
-      };
-    });
+ if (error instanceof ZodError) {
+  // Group errors by field
+  const fieldErrors: Record<string, string[]> = {};
+  error.issues.forEach((issue) => {
+    const field = issue.path.join('.') || 'root';
+    if (!fieldErrors[field]) {
+      fieldErrors[field] = [];
+    }
+    fieldErrors[field].push(issue.message);
+  });
 
-    return new AppError(
-      `Validation failed, Please fix these ${errors.length} erros bellow`,
-      HTTP_STATUS.BAD_REQUEST,
-      ERROR_CODES.VALIDATION_ERROR,
-      {
-        errors, 
-        count: errors.length,
-      }
-    );
-  }
-  
+  const errorEntries = Object.entries(fieldErrors);
+  return new AppError(
+    `Validation failed, Please fix these ${errorEntries.length} errors below`,
+    HTTP_STATUS.BAD_REQUEST,
+    ERROR_CODES.VALIDATION_ERROR,
+    {
+      errors: fieldErrors, 
+      count: errorEntries.length,
+    }
+  );
+}
   return null;
 }

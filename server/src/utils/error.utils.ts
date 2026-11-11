@@ -7,25 +7,25 @@ export const catchAsync = (fn: Function) => {
   };
 };
 
-export const validateRequest = (
+export function validateRequest(
   schema: ZodSchema,
   type: "query" | "body" | "params",
-) => {
+) {
   return catchAsync(async (req: Req, _: Res, next: Nex) => {
-    // Validate body
+    // 1. Process validation type without calling next() early
     if (type === "body" && req.body && Object.keys(req.body).length > 0) {
       req.body = await schema.parseAsync(req.body);
-      next();
     }
-    // Validate query params
+    
     if (type === "query" && req.query && Object.keys(req.query).length > 0) {
       req.validatedQuery = await schema.parseAsync(req.query);
-      next();
     }
-    // Validate params
+    
     if (type === "params" && req.params && Object.keys(req.params).length > 0) {
       req.validatedParams = await schema.parseAsync(req.params);
     }
+
     next();
   });
-};
+}
+

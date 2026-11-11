@@ -1,2 +1,30 @@
+# Environment variables and secrets
 .env
-.git
+.env.*
+!.env.example
+
+# Dependencies
+node_modules/
+
+# Build outputs
+dist/
+dist-ssr/
+build/
+
+# Logs
+*.log
+logs/
+
+# Local configuration
+*.local
+
+# Editor settings
+.vscode/
+.idea/
+
+# Operating system files
+.DS_Store
+Thumbs.db
+
+# Test coverage
+coverage/

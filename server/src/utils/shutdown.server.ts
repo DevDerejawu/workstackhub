@@ -1,5 +1,6 @@
 import { errorLogger as logger } from "./error.logger.js";
 import { pool } from "@/db/index.js";
+import { shutdownRedises } from "./ioredis.js";
 
 export const shutdown = async (signal: string, server: any) => {
   logger.info(`${signal} received. Starting graceful shutdown...`);
@@ -8,6 +9,7 @@ export const shutdown = async (signal: string, server: any) => {
     try {
       await pool.end();
       logger.info("Database connection closed");
+      await shutdownRedises();
       process.exit(0);
     } catch (error) {
       logger.error("Error during shutdown", error);

@@ -5,3 +5,4 @@ export { handleJwtError } from './jwt.error.handler.js';
 export { handleNetworkError } from './network.error.handler.js';
 export { handleUploadError } from './upload.error.handler.js'
 export { handleZodError } from './zod.error.handler.js';
+export {handleCustomError} from './custom.error.handler.js';

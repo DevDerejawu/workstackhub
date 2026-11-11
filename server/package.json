@@ -15,7 +15,7 @@
     "db:seed": "tsx src/db/seed.ts",
     "db:seed:prod": "node dist/db/seed.js",
     "db:push": "drizzle-kit push --config=./src/db/drizzle.config.ts",
-    "db:studio": "drizzle-kit studio --config=./src/db/drizzle.config.ts",
+    "db:studio": "drizzle-kit studio --config=./src/db/drizzle.config.ts --host 0.0.0.0",
     "db:drop": "drizzle-kit drop --config=./src/db/drizzle.config.ts",
     "db:check": "drizzle-kit check --config=./src/db/drizzle.config.ts",
     "migrate:and:start:server": "npm run db:migrate:prod && npm run db:seed:prod && npm run start:server"
@@ -32,28 +32,40 @@
   "author": "Derejawu Baye <devderejawu@gmail.com> (https://derejawu-portfolio.vercel.app)",
   "license": "ISC",
   "dependencies": {
+    "bcrypt": "^6.0.0",
+    "bullmq": "^5.79.3",
     "compression": "^1.8.1",
     "cors": "^2.8.6",
     "dotenv": "^17.4.2",
     "drizzle-orm": "^0.45.2",
     "express": "^5.2.1",
     "helmet": "^8.2.0",
+    "ioredis": "^5.11.1",
+    "jsonwebtoken": "^9.0.3",
     "multer": "^2.2.0",
     "pg": "^8.22.0",
+    "resend": "^6.16.0",
     "winston": "^3.19.0",
     "zod": "^4.4.3"
   },
   "devDependencies": {
+    "@types/bcrypt": "^6.0.0",
     "@types/compression": "^1.8.1",
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.6",
+    "@types/ioredis": "^4.28.10",
+    "@types/jsonwebtoken": "^9.0.10",
     "@types/multer": "^2.1.0",
     "@types/node": "^26.0.0",
+    "@types/pg": "^8.20.0",
     "drizzle-kit": "^0.31.10",
     "tsx": "^4.22.4",
     "typescript": "^6.0.3"
   },
   "overrides": {
-    "esbuild": "^0.25.0"
+    "esbuild": "^0.25.0",
+    "bullmq": {
+      "ioredis": "$ioredis"
+    }
   }
 }

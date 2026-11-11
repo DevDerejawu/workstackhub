@@ -7,11 +7,14 @@ import {
   handleUploadError,
   handleZodError,
   handleFallbackError,
+  handleCustomError
 } from "@/errors/handlers/index.js";
 
 export const globalErrorHandler = (err: any, req: Req, res: Res, _: Nex) => {
+  console.log('error', err)
   var isDev = process.env.NODE_ENV === 'development';
   const handlers = [
+    handleCustomError,
     handleBodyError,
     handleDatabaseError,
     handleJwtError,
@@ -30,11 +33,11 @@ export const globalErrorHandler = (err: any, req: Req, res: Res, _: Nex) => {
       if (isDev) {
         errorLogger.info(response.setContext(req.path, req.method).toLog());
       }
-      return res.status(response.statusCode).json(err.toJSON());
+      return res.status(response.statusCode).json(response.toJSON());
     }
   }
 
   const { json, log } = handleFallbackError(err, req);
   errorLogger.error(log);
-  return res.status(500).json(json);
+  return res.status(log.error.status).json(json);
 };

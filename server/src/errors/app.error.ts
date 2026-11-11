@@ -1,9 +1,12 @@
 import { ERROR_CODES, HTTP_STATUS} from './constants/error.constants.js';
 export interface ErrorResponse {
   success: false;
-  message: string;
-  code: string;
-  data: any;
+  error: {
+    code:string,
+    message: string,
+    status:number,
+    metadata:any
+  };
 }
 
 export class AppError extends Error {
@@ -41,11 +44,13 @@ export class AppError extends Error {
   public toJSON(): ErrorResponse {
     return {
       success: false,
-      message: this.message,
-      code: this.code,
-      data: this.data,
+      error:{
+        message: this.message,
+        code: this.code,
+        status:this.statusCode,
+        metadata:this.data,
+      },
     };
-
   }
 
   public toLog() {
@@ -62,25 +67,26 @@ export class AppError extends Error {
   }
 }
 
-// Convenience factory methods
+//  factory methods
 export class ErrorFactory {
-  static badRequest(message: string, data?: any): AppError {
+  static badRequest(message: string, data: any=null): AppError {
     return new AppError(message, HTTP_STATUS.BAD_REQUEST, ERROR_CODES.VALIDATION_ERROR, data);
   }
 
-  static unauthorized(message: string = 'Unauthorized', data?: any): AppError {
-    return new AppError(message, HTTP_STATUS.UNAUTHORIZED, ERROR_CODES.UNAUTHORIZED, data);
+  static unauthorized(message:string, data: any=null): AppError {
+    return new AppError(message, HTTP_STATUS.FORBIDDEN, ERROR_CODES.UNAUTHORIZED, data);
   }
 
-  static forbidden(message: string = 'Forbidden', data?: any): AppError {
-    return new AppError(message, HTTP_STATUS.FORBIDDEN, ERROR_CODES.FORBIDDEN, data);
+  static unauthenticated(message:string, data: any=null): AppError {
+    return new AppError(message, HTTP_STATUS.UNAUTHORIZED, ERROR_CODES.UNAUTHENICATED, data);
   }
+
 
   static notFound(message: string = 'Resource not found', data?: any): AppError {
     return new AppError(message, HTTP_STATUS.NOT_FOUND, ERROR_CODES.NOT_FOUND, data);
   }
 
-  static conflict(message: string, data?: any): AppError {
+  static conflict(message: string, data: any=null): AppError {
     return new AppError(message, HTTP_STATUS.CONFLICT, ERROR_CODES.DUPLICATE_ENTRY, data);
   }
 

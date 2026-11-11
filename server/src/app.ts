@@ -3,6 +3,7 @@ import cors from "cors";
 import helmet from "helmet";
 import compression from "compression";
 import { globalErrorHandler } from "@/middlewares/global.error.middleware.js";
+import authRouter from "@/routes/auth.route.js";
 
 const app = express();
 app.use(helmet());
@@ -18,13 +19,9 @@ app.use(compression());
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true, limit: "10mb" }));
 
-app.get("/", (_: Req, res: Res) => {
-  res.send("Hello, there");
-});
 
-
-
-
+//auth routes
+app.use("/api/v1/auth", authRouter);
 
 
 // Global Error Handler

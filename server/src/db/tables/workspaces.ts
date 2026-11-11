@@ -26,7 +26,7 @@ export const workspaces = pgTable(
     
     slug: text('slug')
       .notNull()
-      .unique('slug_workspaces_unique'),  // ← Explicit constraint name!
+      .unique('slug_workspaces_unique'),  
     
     type: text('type')
       .default('personal')
@@ -37,7 +37,6 @@ export const workspaces = pgTable(
     settings: jsonb('settings')
       .default(sql`'{}'::jsonb`),
     
-    // Foreign Key: created_by references users.id
     createdBy: uuid('created_by')
       .notNull()
       .references(() => users.id, {
@@ -72,7 +71,7 @@ export const workspaces = pgTable(
     typeIdx: index('idx_workspaces_type').on(table.type),
     createdAtIdx: index('idx_workspaces_created_at').on(table.createdAt),
     
-    // Check Constraints (using sql)
+    // Check Constraints 
     nameCheck: check('name_workspaces_check', sql`length(trim(${table.name})) >= 1`),
     typeCheck: check('type_workspaces_check', sql`${table.type} IN ('personal', 'team')`),
     slugCheck: check('slug_workspaces_check', sql`${table.slug} ~ '^[a-z0-9-]+$'`),

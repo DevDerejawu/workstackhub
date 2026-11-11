@@ -7,7 +7,7 @@ export function handleJwtError(err: any): AppError | null {
     let message = 'Authentication failed. Invalid token.';
     let code = ERROR_CODES.INVALID_TOKEN;
     
-    // More specific error messages based on the error
+    // Specific error messages based on the error
     if (err.message === 'jwt malformed') {
       message = 'Invalid token format. Please provide a valid token.';
     } else if (err.message === 'invalid signature') {

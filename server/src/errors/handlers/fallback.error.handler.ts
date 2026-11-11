@@ -10,9 +10,12 @@ export function handleFallbackError(err: any, req: Req): any {
   // Data to send to client
   const json = {
     success: false,
-    message,
-    code: ERROR_CODES.INTERNAL_ERROR,
-    data: null,
+    error:{
+      message,
+      code: ERROR_CODES.INTERNAL_ERROR,
+      status:HTTP_STATUS.INTERNAL_SERVER,
+      metadata: null,
+    }
   };
 
   // For logging data
@@ -25,7 +28,7 @@ export function handleFallbackError(err: any, req: Req): any {
     path: req.path,
     method: req.method,
     ip: req.ip,
-    userId: req.user?.id || 'anonymous'
+    userId: req?.user?.userId || 'anonymous'
   };
   
   return { log, json };

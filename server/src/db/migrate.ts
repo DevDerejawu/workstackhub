@@ -1,19 +1,17 @@
 import { drizzle } from 'drizzle-orm/node-postgres'
 import { migrate } from 'drizzle-orm/node-postgres/migrator'
 import { Pool } from 'pg'
-import dotenv from 'dotenv'
-
-dotenv.config()
-
+import { errorLogger } from '@/utils/error.logger.js'
 async function main() {
   const isProduction = process.env.NODE_ENV === 'production'
-  console.log('🚀 Starting database migration...')
-  console.log(`📌 Environment: ${isProduction ? 'PRODUCTION' : 'DEVELOPMENT'}`)
-  console.log(`📌 Database: ${process.env.DATABASE_URL?.split('@')[1]?.split('/')[0]}`)
+  errorLogger.info('🚀 Starting database migration...')
+  errorLogger.info(`📌 Environment: ${isProduction ? 'PRODUCTION' : 'DEVELOPMENT'}`)
+  errorLogger.info(`📌 Database: ${process.env.DATABASE_URL?.split('@')[1]?.split('/')[0]}`)
+errorLogger.info(`📌 Database: ${process.env.DATABASE_URL}`)
 
   if (isProduction) {
-    console.log('⚠️  WARNING: Running migrations on PRODUCTION database!')
-    console.log('📌 Press Ctrl+C to cancel, or wait 5 seconds to continue...')
+    errorLogger.info('⚠️  WARNING: Running migrations on PRODUCTION database!')
+    errorLogger.info('📌 Press Ctrl+C to cancel, or wait 5 seconds to continue...')
     await new Promise(resolve => setTimeout(resolve, 5000))
   }
 
@@ -24,13 +22,12 @@ async function main() {
 
   const db = drizzle(pool)
 
-  console.log('📦 Applying migrations...')
+  errorLogger.info('📦 Applying migrations...')
 
   try {
     await migrate(db, { migrationsFolder: 'src/db/migrations' })
-    console.log('✅ Migrations completed successfully!')
+    errorLogger.info('✅ Migrations completed successfully!')
   } catch (error) {
-    console.error('❌ Migration failed:', error)
     throw error
   } finally {
     await pool.end()
@@ -40,6 +37,6 @@ async function main() {
 }
 
 main().catch((err) => {
-  console.error('❌ Migration failed:', err)
+  errorLogger.error('❌ Migration failed: '+ err)
   process.exit(1)
 })
